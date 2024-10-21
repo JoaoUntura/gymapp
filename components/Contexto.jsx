@@ -5,8 +5,6 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  const [username,setUserName] = useState("")
-
     const storeToken = async(newToken) =>{
         await SecureStore.setItemAsync("userToken", newToken)
         console.log('Token armazenado com sucesso!');
@@ -27,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     }
 
   return (
-    <AuthContext.Provider value={{ getToken, storeToken,deleteToken,username,setUserName }}>
+    <AuthContext.Provider value={{ getToken, storeToken,deleteToken}}>
       {children}
     </AuthContext.Provider>
   );

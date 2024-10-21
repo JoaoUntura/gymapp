@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { View ,Text, ScrollView, TouchableOpacity,StyleSheet} from "react-native";
 import axios from 'axios';
 import { AuthContext } from "../components/Contexto";
+import ModalEx from "../components/ModalEx";
 
 function Treinamentos (){
     const [treinamento, setTreinamento] = useState([]);
     const [idTreino, setIdTreino] = useState(null);
     const [series, setSeries] = useState(null);
-  
+    const [modal, setModal] = useState(null);
 
 
     const {getToken} = useContext(AuthContext);
@@ -27,7 +28,6 @@ function Treinamentos (){
         if (id !== null) {
         const response = await axios.get(`http://192.168.3.3:8000/series/${id}`)
         setSeries(response.data)
-        console.log(response.data)
         }
     }
 
@@ -37,23 +37,27 @@ function Treinamentos (){
     },[]);
 
     useEffect(() => {
-        
         if (idTreino) {
             getSeries(idTreino);
         }
     },[idTreino]);
 
-   
+   const delTreinamento = async(id) =>{
+        const response = await axios.delete(`http://192.168.3.3:8000/deltreinamento/${id}`)
+        console.log(response.data)
+        setModal(null)
+        getTreinamentos();
+   }
     
-    const treinos = treinamento.map(t => <TouchableOpacity key={t} style={styles.button} onPress={()=> setIdTreino(t)}><Text>{t}</Text></TouchableOpacity>)
-    //const detalhes_treino = 
+    const treinos = treinamento.map(t => <TouchableOpacity key={t} style={styles.button} onPress={()=> setIdTreino(t)} onLongPress={()=>setModal(t)}><Text>{t}</Text></TouchableOpacity>)
+
 
 
     return(
         <ScrollView style={styles.page}>
             
+            {modal && <ModalEx modal={modal} setModal={setModal} deletar={delTreinamento} ></ModalEx>}
            {!series && treinos}
-
            {series && Object.keys(series).map(exercicio => 
             <View key={exercicio} style={styles.ex_container}>
                 <Text style={styles.text} >{exercicio}</Text>

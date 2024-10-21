@@ -2,17 +2,17 @@ import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity
 import React, { useEffect, useState } from 'react';
 
 
-function ModalEx({exSelecionado,deleteEx,setExselecionado}) {
-  console.log('Modal aberto', exSelecionado);
+function ModalEx({modal,setModal, deletar}) {
+
 
     return (
         <Modal transparent={true}>
             <View style={styles.modalContainer}>
-            <TouchableOpacity onPress={() => {setExselecionado("")}}>
+            <TouchableOpacity onPress={() => {setModal(null)}}>
                     <Text style={styles.text_x}>X</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button_x} onPress={() => {deleteEx(exSelecionado) }}>
-                    <Text style={styles.remover_ex}>X   Remover Exercício</Text>
+                <TouchableOpacity style={styles.button_x} onPress={() => {deletar(modal) }}>
+                    <Text style={styles.remover_ex}>X  Remover</Text>
                 </TouchableOpacity>
             </View>
         </Modal>

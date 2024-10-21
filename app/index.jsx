@@ -2,13 +2,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { Link } from 'expo-router';
-import NovoTreinamento from './NovoTreinamento';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { AuthContext } from '../components/Contexto';
 
 function App (){
     const [login, setLogin] = useState(false)
-    const {username, setUserName, deleteToken, getToken} = useContext(AuthContext);
+    const {deleteToken, getToken} = useContext(AuthContext);
 
     useEffect(() => {
         const checkToken = async () => {
@@ -24,27 +23,46 @@ function App (){
         checkToken();
     }, []);
 
+
     const logOut = () =>{
         deleteToken();
-        setUserName("Nenhum");
-        setLogin(false)
+        setLogin(false);
     }
 
 
+    const renderLoggedIn = () => (
+        <>
+            <Text style={styles.text}>Usuário Logado</Text>
+            <TouchableOpacity style={styles.button} onPress={logOut}>
+                <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
+            <Link style={styles.button} href="/NovoTreinamento">
+                <Text style={styles.buttonText}>Novo Treinamento</Text>
+            </Link>
+            <Link style={styles.button} href="/Treinamentos">
+                <Text style={styles.buttonText}>Treinamentos</Text>
+            </Link>
+        </>
+    );
+
+    const renderLoggedOut = () => (
+        <View style={styles.container}>
+            <Link style={styles.button} href="/Login">
+                <Text style={styles.buttonText}>Login</Text>
+            </Link>
+            <Link style={styles.button} href="/Sign">
+                <Text style={styles.buttonText}>Sign</Text>
+            </Link>
+        </View>
+    );
+
     return (
-            <View style={styles.page}>
-                <Text style={styles.text}>Usuário Logado: {username}</Text>
-                {login && <TouchableOpacity style={styles.button} onPress={logOut}><Text>Logout</Text></TouchableOpacity>}
-                <View style={styles.container} >
-                <Link style={styles.button} href="/Login">Login</Link>
-                <Link style={styles.button} href="/Sign">Sign</Link>
-                {login && <><Link style={styles.button} href="/NovoTreinamento">Novo Treinamento</Link>
-                <Link  style={styles.button} href="/Treinamentos">Treinamentos</Link></> }
-                
-                </View>
-            </View>   
+        <View style={styles.page}>
+            {login ? renderLoggedIn() : renderLoggedOut()}
+        </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     //
@@ -73,7 +91,6 @@ const styles = StyleSheet.create({
 
     text: {
         fontSize:20,
-      
         color:'white'
     },
 
@@ -85,4 +102,4 @@ const styles = StyleSheet.create({
   });
 
 
-export default App;
+export default App

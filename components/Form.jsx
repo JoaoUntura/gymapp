@@ -11,11 +11,25 @@ function Form (props){
     const handleChangeNome = (texto) => {
         if (texto.includes(' ')){
             setError("O nome do usuário não pode incluir espaços  !")
+            setNome(texto)
         }
+        
         else{
             setError('')
             setNome(texto)
         }
+    }
+
+    const handleSubmit = (nome,senha) => {
+        if (nome === "" || senha === ""){
+            setError("Campos vazios!")
+        
+        }else if (nome.includes(' ')||senha.includes(' ')){
+            setError("Usuário ou senha possui espaços!")
+        }else{
+            props.submitUser(nome,senha)
+        }
+        
     }
 
     return(
@@ -26,7 +40,7 @@ function Form (props){
             {error ? <Text style={styles.text_error}>{error}</Text>: null}
             <TextInput  style={styles.input} onChangeText={texto => setSenha(texto)} placeholder="Senha"></TextInput>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => props.submitUser(nome,senha)}><Text>Enviar</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => handleSubmit(nome,senha)}><Text>Enviar</Text></TouchableOpacity>
             {props.resposta ?<Text style={styles.text_error}>{props.resposta}</Text>: null}
         </ScrollView>
     );

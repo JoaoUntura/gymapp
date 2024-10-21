@@ -6,8 +6,8 @@ import ModalEx from "./ModalEx";
 function Exercicios({ exAtivo, setEx, serie, setSerie}) {
 
    
-  const [modal, setModal] = useState(false)
-  const [exSelecionado, setExselecionado] = useState('');
+  const [modal, setModal] = useState(null)
+
 
 
   const handleChangeSerie = (idSerie, valor, campo) => {
@@ -30,19 +30,14 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
   const deleteEx = (exercicio) => {
       setEx(exAtivo.filter(ex => ex.idExercicio !== exercicio));
       setSerie(serie.filter(s => s.idEx !== exercicio));
-      setExselecionado("")
+      setModal(null)
     };
 
 
     const createModal = (idExercicio) => {
-      setExselecionado(idExercicio); 
+      setModal(idExercicio)
     };
-    
-  useEffect(() => {
-      console.log('Exercício selecionado:', exSelecionado);
-      setModal(exSelecionado !== "");
-    }, [exSelecionado]);
-    
+
 
 
   const renderSeries = (idExercicio) =>{
@@ -87,8 +82,7 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
 
   return (
       <>
-      
-      {modal && <ModalEx exSelecionado={exSelecionado} deleteEx={deleteEx} setExselecionado={setExselecionado}/>}
+      {modal && <ModalEx modal={modal} setModal={setModal}  deletar={deleteEx} />}
       {listaExs}
       </>
 
