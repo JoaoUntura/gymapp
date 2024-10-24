@@ -3,6 +3,7 @@ import { View ,Text, ScrollView, TouchableOpacity,StyleSheet} from "react-native
 import axios from 'axios';
 import { AuthContext } from "../components/Contexto";
 import ModalEx from "../components/ModalEx";
+import api from "../axios";
 
 function Treinamentos (){
     const [treinamento, setTreinamento] = useState([]);
@@ -16,7 +17,7 @@ function Treinamentos (){
 
     const getTreinamentos = async() =>{
         const token = await getToken()
-        const response = await axios.get('http://192.168.3.3:8000/treinamentos', {headers: {
+        const response = await api.get('/treinamentos', {headers: {
             'Authorization': `Bearer ${token}`,  
             'Content-Type': 'application/json',
           }
@@ -26,7 +27,7 @@ function Treinamentos (){
 
     const getSeries = async(id) =>{
         if (id !== null) {
-        const response = await axios.get(`http://192.168.3.3:8000/series/${id}`)
+        const response = await api.get(`/series/${id}`)
         setSeries(response.data)
         }
     }
@@ -43,7 +44,7 @@ function Treinamentos (){
     },[idTreino]);
 
    const delTreinamento = async(id) =>{
-        const response = await axios.delete(`http://192.168.3.3:8000/deltreinamento/${id}`)
+        const response = await api.delete(`/deltreinamento/${id}`)
         console.log(response.data)
         setModal(null)
         getTreinamentos();
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
         justifyContent:'flex-start',
         flexDirection:'row',
         backgroundColor:'grey',
-        width:'100vw'
+        width:400 
     },
 
     ex_container:{

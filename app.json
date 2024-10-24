@@ -13,14 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.gymapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.gymapp"
+      "package": "com.anonymous.gymapp",
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +36,11 @@
     "experiments": {
       "typedRoutes": true
     },
-    "entryPoint": "./app/App.jsx"
+    "entryPoint": "./app/App.jsx",
+    "extra": {
+      "eas": {
+        "projectId": "d99ed84e-9568-4233-8aa9-b1cab4cbfd07"
+      }
+    }
   }
 }

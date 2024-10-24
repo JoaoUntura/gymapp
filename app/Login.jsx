@@ -3,7 +3,7 @@ import Form from '../components/Form';
 import axios from 'axios';
 import {useRouter } from 'expo-router';
 import { AuthContext } from '../components/Contexto';
-
+import api from '../axios';
 
 function Login (){
     const [resposta,setResposta] = useState("")
@@ -14,7 +14,7 @@ function Login (){
     const router = useRouter();
 
     const submitUser = async(nome,senha)=>{
-        const response =  await axios.post('http://192.168.3.3:8000/check_user', {nome:nome,senha:senha});
+        const response =  await api.post('/check_user', {nome:nome,senha:senha});
         setResposta(response.data.message)
 
         if(response.data.token){

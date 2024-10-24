@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import {Picker} from '@react-native-picker/picker'
 import axios from 'axios';
+import api from '../axios';
 
-function Card({ setEx, setCard, exAtivo }) {
+
+function ListaExs({ setEx, setListaExs, exAtivo }) {
   const [exercicios, setExercicios] = useState([]);
   const [pesquisa, setPesquisa] = useState('');
   const [categoria, setCategoria] = useState('todos');
 
   useEffect(() => {
     const getExercicios = async () => {
-      const response = await axios.get('http://192.168.3.3:8000/exercicios');
+      const response = await api.get('/exercicios');
       setExercicios(response.data);
     };
     getExercicios();
@@ -24,7 +26,7 @@ function Card({ setEx, setCard, exAtivo }) {
     if (existe.length === 0) {
       setEx(prevItems => [...prevItems, { idExercicio: exercicio.idExercicio, nome: exercicio.nome }]);
       
-      setCard(false);
+      setListaExs(false);
     } else {
       alert('Esse exercício já foi adicionado!');
     }
@@ -34,7 +36,7 @@ function Card({ setEx, setCard, exAtivo }) {
   
   const listaExs = exFiltrados.map(exercicio => (
     <View style={styles.card} key={exercicio.idExercicio}>
-      <Image source={require('../static/images/black.jpg')}  style={styles.img}/>
+      <Image source={require('../assets/images/black.jpg')}  style={styles.img}/>
       <View style={styles.nomes}>
       <Text style={styles.text}>{exercicio.nome}</Text>
       <Text style={styles.text} >{exercicio.nome_muscle}</Text>
@@ -133,4 +135,4 @@ const styles = StyleSheet.create({
 
 
 
-export default Card;
+export default ListaExs;

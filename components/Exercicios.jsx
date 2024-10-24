@@ -11,15 +11,23 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
 
 
   const handleChangeSerie = (idSerie, valor, campo) => {
+    
       setSerie(prevSerie => prevSerie.map(s => s.idSerie == idSerie ? { ...s, [campo]: valor } : s));
   };
 
   const addSerie = (idExercicio) => {
       let seriesDesseID = serie.filter(s => s.idEx == idExercicio);
-  
+
+      let lastIdSerie;
+      if (serie.length == 0){
+        lastIdSerie = 0
+      }else{
+        lastIdSerie = serie[serie.length-1].idSerie
+      }
+        
       let proximaSerie = seriesDesseID.length == 0 ? 1 : seriesDesseID[seriesDesseID.length - 1].numSerie + 1;
   
-      setSerie(prev => [...prev, { idSerie: prev.length + 1, numSerie: proximaSerie, idEx: idExercicio, reps: '', kg: '' }]);
+      setSerie(prev => [...prev, { idSerie: lastIdSerie + 1, numSerie: proximaSerie, idEx: idExercicio, reps: '', kg: '' }]);
   };
 
   const deleteSerie = (serieDeletada) => {

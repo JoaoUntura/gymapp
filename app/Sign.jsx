@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity
 import Form from '../components/Form';
 import axios from 'axios';
 import { Link, useRouter } from 'expo-router';
+import api from '../axios';
 
 function Sign (){
 
@@ -11,7 +12,7 @@ function Sign (){
     const router = useRouter();
 
     const submitUser = async(nome,senha)=>{
-        const response =  await axios.post('http://192.168.3.3:8000/novo_user', {nome:nome,senha:senha});
+        const response =  await api.post('/novo_user', {nome:nome,senha:senha});
         console.log(response.data)
         router.push("/Login")
     }

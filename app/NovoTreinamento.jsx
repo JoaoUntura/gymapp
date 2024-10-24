@@ -1,30 +1,32 @@
-import React, { useContext,useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity, Modal} from 'react-native';
-import Card from '../components/Card';
+import React, { useContext, useEffect, useState } from 'react';
+import {Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import ListaExs from '../components/ListaExs';
 import Exercicios from '../components/Exercicios';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AuthContext } from '../components/Contexto';
+import api from '../axios';
 
-import axios from 'axios';
 
 
 
 function NovoTreinamento() {
-  const [showCard, setCard] = useState(false);
+  const [showListaExs, setListaExs] = useState(false);
   const [exAtivo, setEx] = useState([]);
+  const [volume, setVolume] = useState(0)
   const [serie, setSerie] = useState([]);
   const {getToken} = useContext(AuthContext);
 
   const router = useRouter();
 
-  const renderCard = () => {
-    setCard(true);
+  const renderLista = () => {
+    setListaExs(true);
   };
   
 
   const finishWork = async() => {
     const token = await getToken()
-    let response = await axios.post('http://192.168.3.3:8000/novo_treinamento', {serie:serie},
+    let data = {serie:serie, volume:volume}
+    let response = await api.post('/novo_treinamento', data ,
       {headers: {
           'Authorization': `Bearer ${token}`,  
           'Content-Type': 'application/json',
@@ -34,14 +36,34 @@ function NovoTreinamento() {
     router.push("/Treinamentos ")
   }
 
+  useEffect(() => {
+    console.log(serie)
+    let calc = 0
+    serie.forEach(s => (
+      calc += parseInt(s.reps) * parseInt(s.kg)
+    
+    ))
+    setVolume(calc)
+  },[serie])
+
+
+  const renderUserTreinoAtual = () => (
+    <>
+      <Text style={styles.text_add_serie}>Volume: {volume}</Text>
+      <Exercicios exAtivo={exAtivo} setEx={setEx} serie={serie} setSerie={setSerie}/>
+      <TouchableOpacity style={styles.button} onPress={renderLista} ><Text style={styles.text_add_serie} >Adicionar Exercício</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.button}  onPress={finishWork}><Text style={styles.text_add_serie}>Finalizar</Text></TouchableOpacity>
+    </>
+  )
+
+  const renderListaExsBd = () => (
+    <ListaExs exAtivo={exAtivo} setEx={setEx} setListaExs={setListaExs} />
+  )
+
+    
   return (
     <ScrollView style={styles.page}>
-      {!showCard && <Exercicios exAtivo={exAtivo} setEx={setEx} serie={serie} setSerie={setSerie}/>}
-      {!showCard && <TouchableOpacity style={styles.button} onPress={renderCard} >
-        <Text style={styles.text_add_serie} >Adicionar Exercício</Text>
-      </TouchableOpacity>}
-      {showCard && <Card exAtivo={exAtivo} setEx={setEx} setCard={setCard} />}
-      {!showCard && <TouchableOpacity style={styles.button}  onPress={finishWork}><Text style={styles.text_add_serie}>Finalizar</Text></TouchableOpacity>}
+      {showListaExs ? renderListaExsBd() : renderUserTreinoAtual()}
     </ScrollView>
   );
 }
@@ -51,6 +73,7 @@ const styles = StyleSheet.create({
   //
   page: {
     padding: 20,
+    paddingTop:40,
     backgroundColor: 'black',
   },
   //
