@@ -5,6 +5,7 @@ import { Link } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { AuthContext } from '../components/Contexto';
 
+
 function App (){
     const [login, setLogin] = useState(false)
     const {deleteToken, getToken} = useContext(AuthContext);
@@ -36,11 +37,17 @@ function App (){
             <TouchableOpacity style={styles.button} onPress={logOut}>
                 <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
+            <Link style={styles.button} href="/MyCalendar">
+                <Text style={styles.buttonText}>Minha Rotina</Text>
+            </Link>
             <Link style={styles.button} href="/NovoTreinamento">
                 <Text style={styles.buttonText}>Novo Treinamento</Text>
             </Link>
             <Link style={styles.button} href="/Treinamentos">
                 <Text style={styles.buttonText}>Treinamentos</Text>
+            </Link>
+            <Link style={styles.button} href="/GeradorRotina">
+                <Text style={styles.buttonText}>Gerador Rotinas</Text>
             </Link>
         </>
     );
@@ -59,6 +66,7 @@ function App (){
     return (
         <View style={styles.page}>
             {login ? renderLoggedIn() : renderLoggedOut()}
+
         </View>
     );
 };

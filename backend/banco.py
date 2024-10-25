@@ -22,9 +22,9 @@ class Banco:
         query = "SELECT idTreinamento_serie, nome, reps, kg FROM series JOIN exercicio ON idExercicio_serie = idExercicio WHERE idTreinamento_serie = :id"
         return await self.database.fetch_all(query, values={"id": id})
 
-    async def insert_treinamento(self, id):
-        query = "INSERT INTO treinamento(idUser_treinamento) VALUES(:id)"
-        await self.database.execute(query, values={"id": id})
+    async def insert_treinamento(self, id, volume):
+        query = "INSERT INTO treinamento(idUser_treinamento, volume) VALUES(:id, :volume)"
+        await self.database.execute(query, values={"id": id, "volume":volume})
 
     async def last_treinamento(self):
         query = "SELECT idTreinamento FROM treinamento ORDER BY idTreinamento DESC LIMIT 1"

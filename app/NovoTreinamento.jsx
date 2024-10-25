@@ -5,6 +5,7 @@ import Exercicios from '../components/Exercicios';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '../components/Contexto';
 import api from '../axios';
+import { View } from 'react-native-web';
 
 
 
@@ -14,6 +15,7 @@ function NovoTreinamento() {
   const [exAtivo, setEx] = useState([]);
   const [volume, setVolume] = useState(0)
   const [serie, setSerie] = useState([]);
+  const [finishScreen, setFinishScreen] = useState(false);
   const {getToken} = useContext(AuthContext);
 
   const router = useRouter();
@@ -60,10 +62,14 @@ function NovoTreinamento() {
     <ListaExs exAtivo={exAtivo} setEx={setEx} setListaExs={setListaExs} />
   )
 
+  
     
   return (
     <ScrollView style={styles.page}>
+
+     
       {showListaExs ? renderListaExsBd() : renderUserTreinoAtual()}
+      
     </ScrollView>
   );
 }

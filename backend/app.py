@@ -104,7 +104,7 @@ def verify_token(token: str):
 async def treinamento(treinamento:Treinamento , token: str = Depends(oauth2_scheme)):
     print(treinamento)
     userid = verify_token(token)
-    await bd.insert_treinamento(userid)
+    await bd.insert_treinamento(userid, treinamento.volume)
     
     treino_id = await bd.last_treinamento()
 
