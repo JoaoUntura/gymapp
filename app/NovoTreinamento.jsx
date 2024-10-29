@@ -8,14 +8,11 @@ import api from '../axios';
 import { View } from 'react-native-web';
 
 
-
-
 function NovoTreinamento() {
   const [showListaExs, setListaExs] = useState(false);
   const [exAtivo, setEx] = useState([]);
   const [volume, setVolume] = useState(0)
   const [serie, setSerie] = useState([]);
-  const [finishScreen, setFinishScreen] = useState(false);
   const {getToken} = useContext(AuthContext);
 
   const router = useRouter();

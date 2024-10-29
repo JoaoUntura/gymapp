@@ -26,6 +26,7 @@ class Banco:
         query = "INSERT INTO treinamento(idUser_treinamento, volume) VALUES(:id, :volume)"
         await self.database.execute(query, values={"id": id, "volume":volume})
 
+
     async def last_treinamento(self):
         query = "SELECT idTreinamento FROM treinamento ORDER BY idTreinamento DESC LIMIT 1"
         return await self.database.fetch_one(query)
@@ -45,3 +46,17 @@ class Banco:
     async def del_treinamento(self, id):
         query = "DELETE FROM treinamento WHERE idTreinamento = :id"
         await self.database.execute(query, values={"id": id})
+
+    async def insert_rotina(self,userid,experiencia, objetivo, days, foco, cardio):
+        query = "INSERT INTO rotina (userid, experiencia, objetivo, days, foco, cardio) VALUES(:userid,:experiencia, :objetivo, :days, :foco, :cardio)"
+        await self.database.execute(query, values={"userid": userid, "experiencia":experiencia, "objetivo":objetivo, "days":days, "foco":foco, "cardio":cardio })
+
+
+    async def select_rotina(self, id):
+        query = "SELECT * FROM rotina WHERE userid = :id"
+        return await self.database.fetch_one(query, values={"id": id})
+    
+
+    async def last_rotina(self):
+        query = "SELECT idrotina FROM rotina ORDER BY idrotina DESC LIMIT 1"
+        return await self.database.fetch_one(query)

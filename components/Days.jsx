@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 
-const Days = () => {
-  const [days, setDays] = useState({'Do':false, 'Se':false, 'Te':false, 'Qa':false, 'Qi':false, 'Sex':false, 'Sa':false})
+const Days = ({setSelectedDay, days, setDays}) => {
+  
 
   const handleDayChange = (day) => {
     let valor;
@@ -14,6 +14,9 @@ const Days = () => {
     }
 
     setDays(d=> ({...d, [day]:valor}))
+    console.log(day)
+    setSelectedDay(day)
+
   }
 
   const renderDays = () => (
@@ -36,26 +39,30 @@ const Days = () => {
 const styles = StyleSheet.create({
   page: {
     flex:1,
-  padding: 10,
-  paddingTop:60,
   backgroundColor: 'black',
   alignItems:'center'
 },
   container: {
-    width:350,
+    width:330,
     justifyContent:'space-around',
     flexDirection:'row'
   },
   day_uncheck: {
+    justifyContent:'center',
+    width:35,
+    height:35,
     borderRadius:20,
     backgroundColor :'black'
   },
   day_check: {
-
+    justifyContent:'center',
+    width:35,
+    height:35,
     borderRadius:20,
     backgroundColor :'red'
   },
   day_text:{
+    marginLeft:5,
     fontSize:16,
     color:'white'
   }

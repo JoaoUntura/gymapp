@@ -46,8 +46,7 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
       setModal(idExercicio)
     };
 
-
-
+    
   const renderSeries = (idExercicio) =>{
       let seriesDesseID = serie.filter(s=> s.idEx == idExercicio)
 
@@ -75,7 +74,7 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
       );
   }
 
-  let listaExs = exAtivo.map(exercicio =>
+  const renderExsAtivos = () => (exAtivo.map(exercicio =>
       (<View style={styles.cardAtivos} key={exercicio.idExercicio}>
           <TouchableOpacity onLongPress={() => createModal(exercicio.idExercicio)} >
               <Text style={styles.nome_ex}>{exercicio.nome}</Text>
@@ -85,13 +84,13 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
               <Text style={styles.text_add_serie}> + Adicionar Serie</Text>
           </TouchableOpacity>
       </View>)
-  )
+  ))
 
 
   return (
       <>
       {modal && <ModalEx modal={modal} setModal={setModal}  deletar={deleteEx} />}
-      {listaExs}
+      {renderExsAtivos()}
       </>
 
   );
