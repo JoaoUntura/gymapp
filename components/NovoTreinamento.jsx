@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
-import ListaExs from '../components/ListaExs';
-import Exercicios from '../components/Exercicios';
+import ListaExs from './ListaExs';
+import Exercicios from './Exercicios';
 import { useRouter } from 'expo-router';
-import { AuthContext } from '../components/Contexto';
+import { AuthContext } from './Contexto';
 import api from '../axios';
-import { View } from 'react-native-web';
 
 
-function NovoTreinamento() {
+
+function NovoTreinamento({rotina, selectedDay}) {
   const [showListaExs, setListaExs] = useState(false);
   const [exAtivo, setEx] = useState([]);
   const [volume, setVolume] = useState(0)
   const [serie, setSerie] = useState([]);
+  
   const {getToken} = useContext(AuthContext);
 
   const router = useRouter();
@@ -46,6 +47,14 @@ function NovoTreinamento() {
   },[serie])
 
 
+  useEffect(() => {
+    if (rotina && selectedDay && rotina[selectedDay]) {  
+      setEx(rotina[selectedDay]["exAtivo"] || []);
+      setSerie(rotina[selectedDay]["serie"] || []);
+  }
+  }, [selectedDay]);
+    
+
   const renderUserTreinoAtual = () => (
     <>
       <Text style={styles.text_add_serie}>Volume: {volume}</Text>
@@ -63,7 +72,6 @@ function NovoTreinamento() {
     
   return (
     <ScrollView style={styles.page}>
-
      
       {showListaExs ? renderListaExsBd() : renderUserTreinoAtual()}
       

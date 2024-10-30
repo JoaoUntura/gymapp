@@ -40,7 +40,7 @@ function App (){
             <Link style={styles.button} href="/MyCalendar">
                 <Text style={styles.buttonText}>Minha Rotina</Text>
             </Link>
-            <Link style={styles.button} href="/NovoTreinamento">
+            <Link style={styles.button} href="/Personalizado">
                 <Text style={styles.buttonText}>Novo Treinamento</Text>
             </Link>
             <Link style={styles.button} href="/Treinamentos">

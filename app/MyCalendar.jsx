@@ -5,17 +5,18 @@ import { AuthContext } from "../components/Contexto";
 import api from "../axios";
 import {Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import { useRouter } from 'expo-router';
+import NovoTreinamento from "../components/NovoTreinamento";
 
 
 function MyCalendar () {
     const [days, setDays] = useState({'Do':false, 'Se':false, 'Te':false, 'Qa':false, 'Qi':false, 'Sex':false, 'Sa':false})
-    const [selectedDay, setSelectedDay] = useState("")
-    const [exAtivo, setEx] = useState([]);
-    const [serie, setSerie] = useState([]);
+    const [selectedDay, setSelectedDay] = useState(null)
     const [rotina, setRotina] = useState(null);
     const {getToken} = useContext(AuthContext);
 
-    const router = useRouter();
+
+
+
     const getRotina = async() =>{
         const token = await getToken()
         const response = await api.get('/get_rotina', {headers: {
@@ -24,44 +25,35 @@ function MyCalendar () {
           }
         });
         
-        setRotina(response.data.myrotina)
-       
+      setRotina(response.data.myrotina)
+
        };
-    
 
     useEffect(() => {
-        getRotina();
+        if(!rotina){
+          getRotina();
+          
+        }
         
+        console.log(rotina)
       }, []);
     
     useEffect(() => {
-      if (rotina && selectedDay && rotina[selectedDay]) {  
-        setEx(rotina[selectedDay]["exAtivo"] || []);
-        setSerie(rotina[selectedDay]["serie"] || []);
-        console.log("oi")
-    }
-    }, [selectedDay]);
-  
-    const finishWork = async() => {
-      const token = await getToken()
-      const volume =100
-      let data = {serie:serie, volume:volume}
-      let response = await api.post('/novo_treinamento', data ,
-        {headers: {
-            'Authorization': `Bearer ${token}`,  
-            'Content-Type': 'application/json',
+      if (rotina) {
+        Object.keys(rotina).map((dia => {
+          if (dia in days) {
+            setDays(prev => ({ ...prev, [dia]: true }))
+
           }
-        });
-      
-      router.push("/Treinamentos ")
-    }
-  
-      
+
+        }))
+      }
+    }, [rotina]);
+    
     return(
         <ScrollView style={styles.page}>
-          <Exercicios exAtivo={exAtivo} setEx={setEx} serie={serie} setSerie={setSerie}></Exercicios>
-          <TouchableOpacity style={styles.button}  onPress={finishWork}><Text style={styles.text_add_serie}>Finalizar</Text></TouchableOpacity>
-          <Days setSelectedDay={setSelectedDay} days={days} setDays={setDays}></Days>
+          {!selectedDay && <Days setSelectedDay={setSelectedDay} days={days} setDays={setDays}></Days>}
+          <NovoTreinamento rotina={rotina} selectedDay={selectedDay}></NovoTreinamento>
         </ScrollView>
         
     );

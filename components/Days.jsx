@@ -14,8 +14,11 @@ const Days = ({setSelectedDay, days, setDays}) => {
     }
 
     setDays(d=> ({...d, [day]:valor}))
-    console.log(day)
-    setSelectedDay(day)
+    if (typeof setSelectedDay === 'function') {
+      setSelectedDay(day);  // Executa a função se ela estiver definida
+    }
+
+    
 
   }
 
