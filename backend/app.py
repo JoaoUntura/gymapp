@@ -5,6 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from banco import Banco
 from Auth import Auth
 from rotina import Rotina
+from estatisticas import Stats
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -125,7 +126,7 @@ async def novo_user(user: User):
 
 @app.post("/check_user")
 async def check_user(user: User):
-    
+  
     verificacao = await auth.check(user.nome,user.senha)
 
     if verificacao:
@@ -136,16 +137,6 @@ async def check_user(user: User):
     else:
         return {"token":False,"message": "Erro de login"}
 
-
-"""
-class Questionario(BaseModel):
-    experiencia:str
-    objetivo:str
-    days:dict
-    foco:str
-    cardio:str
-
-"""
 
     
 @app.post("/new_rotina")
@@ -168,4 +159,14 @@ async def get_rotina(request:Request, token: str = Depends(oauth2_scheme)):
     return {"myrotina":myrotina}
 
 
+    return "ok"
+
+
+@app.get("/stats")
+async def stats(request:Request, token: str = Depends(oauth2_scheme)):
+    userid = auth.verify_token(token)
+    s = Stats(userid)
+    musculo_porcentagem, musculo, musculo_color = await s.get()
+
+    return  {"musculo_porcentagem":musculo_porcentagem,"musculo":musculo,"musculo_color" :musculo_color}
 

@@ -19,21 +19,24 @@ class Auth:
         return user_id
 
     async def check(self,nome,senha):
+        await self.bd.connect()
 
         try:
             usuario = await self.bd.check_user(nome)
             
-        except Exception as e:
             
+        except Exception as e:
+            print(e)
             return False
         
 
         if bcrypt.verify(senha, usuario['senha']):
             return usuario
+            
         
         else:
             return False
-
+            
     
     def create_jwt_token(self,id):
         token = jwt.encode({"sub": id}, SECRET_KEY, algorithm=ALGORITHM)

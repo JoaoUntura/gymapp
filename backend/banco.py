@@ -21,6 +21,10 @@ class Banco:
     async def select_series(self, id):
         query = "SELECT idTreinamento_serie, nome, reps, kg FROM series JOIN exercicio ON idExercicio_serie = idExercicio WHERE idTreinamento_serie = :id"
         return await self.database.fetch_all(query, values={"id": id})
+    
+    async def select_series_by_muscle(self, id):
+        query = "select idSerie, reps, kg, nome_muscle from series join exercicio on idExercicio_serie = idExercicio join muscle on muscle_idMuscle = idMuscle WHERE idTreinamento_serie = :id"
+        return await self.database.fetch_all(query, values={"id": id})
 
     async def insert_treinamento(self, id, volume):
         query = "INSERT INTO treinamento(idUser_treinamento, volume) VALUES(:id, :volume)"
@@ -40,6 +44,7 @@ class Banco:
         await self.database.execute(query, values={"nome": nome, "senha_hash": senha_hash})
 
     async def check_user(self, nome):
+        print(nome)
         query = "SELECT * FROM user WHERE username = :nome"
         return await self.database.fetch_one(query, values={"nome": nome})
 

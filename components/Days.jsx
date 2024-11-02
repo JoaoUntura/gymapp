@@ -18,8 +18,6 @@ const Days = ({setSelectedDay, days, setDays}) => {
       setSelectedDay(day);  // Executa a função se ela estiver definida
     }
 
-    
-
   }
 
   const renderDays = () => (

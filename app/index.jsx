@@ -37,8 +37,8 @@ function App (){
             <TouchableOpacity style={styles.button} onPress={logOut}>
                 <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
-            <Link style={styles.button} href="/MyCalendar">
-                <Text style={styles.buttonText}>Minha Rotina</Text>
+            <Link style={styles.button} href="/Stats">
+                <Text style={styles.buttonText}>Stats</Text>
             </Link>
             <Link style={styles.button} href="/Personalizado">
                 <Text style={styles.buttonText}>Novo Treinamento</Text>
@@ -49,6 +49,10 @@ function App (){
             <Link style={styles.button} href="/GeradorRotina">
                 <Text style={styles.buttonText}>Gerador Rotinas</Text>
             </Link>
+            <Link style={styles.button} href="/MyCalendar">
+                <Text style={styles.buttonText}>Minha Rotina (BETA)</Text>
+            </Link>
+            
         </>
     );
 
