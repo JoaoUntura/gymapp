@@ -1,3 +1,8 @@
+/*
+Contexto que fornece as funções para manipular o token
+*/
+
+
 import React, { createContext, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 

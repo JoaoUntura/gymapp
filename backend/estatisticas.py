@@ -9,16 +9,8 @@ class Stats:
     
     async def get(self):
         await bd.connect()
-        treinos = await bd.select_treinos(self.userid)
         
-        ids = [treino['idTreinamento'] for treino in treinos]
-
-        series = []
-        for id in ids:
-            group = await bd.select_series_by_muscle(id)
-            for serie in group:
-                series.append(dict(serie))
-        
+        series = await bd.select_series_by_muscle(self.userid)
 
         musculo = {"Peitoral":0, "Costas":0,  "Bíceps":0, "Tríceps":0, "Deltóide":0, "Quadríceps":0 , "Posterior":0, "Panturrilha":0,"Glúteos":0,"Trapézio":0,"Abdômen":0}
         total = 0
@@ -59,4 +51,9 @@ class Stats:
         return musculo_porcentagem, musculo, musculo_color
        
 
+    async def get_progessao(self, idExercicio):
+        await bd.connect()
+        series = await bd.select_best_byday(idExercicio,  self.userid)
+        return series
+        
 

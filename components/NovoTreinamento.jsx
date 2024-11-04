@@ -8,12 +8,15 @@ import api from '../axios';
 
 
 
-function NovoTreinamento({rotina, selectedDay}) {
+function NovoTreinamento() {
   const [showListaExs, setListaExs] = useState(false);
   const [exAtivo, setEx] = useState([]);
   const [volume, setVolume] = useState(0)
   const [serie, setSerie] = useState([]);
-  
+  const [bestSerie, setBestSerie] = useState(null)
+  const [bestKg, setBestKg] = useState(null)
+
+
   const {getToken} = useContext(AuthContext);
 
   const router = useRouter();
@@ -36,8 +39,26 @@ function NovoTreinamento({rotina, selectedDay}) {
     router.push("/Treinamentos ")
   }
 
+  const getBestSeriesKg = async(exs) => {
+    
+    console.log(exs)
+    const token = await getToken()
+    let data = {"exs":exs}
+    let response = await api.post('/get_best', data ,
+      {headers: {
+          'Authorization': `Bearer ${token}`,  
+          'Content-Type': 'application/json',
+        }
+      });
+
+    let bestSerieData = response.data.bestSeries
+    setBestSerie(bestSerieData)
+    let bestKgData = response.data.bestKgs
+    setBestKg(bestKgData)
+    
+  }
+
   useEffect(() => {
-    console.log(serie)
     let calc = 0
     serie.forEach(s => (
       calc += parseInt(s.reps) * parseInt(s.kg)
@@ -45,22 +66,25 @@ function NovoTreinamento({rotina, selectedDay}) {
     ))
     setVolume(calc)
   },[serie])
-
-
+  
   useEffect(() => {
-    if (rotina && selectedDay && rotina[selectedDay]) {  
-      setEx(rotina[selectedDay]["exAtivo"] || []);
-      setSerie(rotina[selectedDay]["serie"] || []);
-  }
-  }, [selectedDay]);
     
+    if (exAtivo.length > 0){
+    getBestSeriesKg(exAtivo)
+    }
+    
+
+  },[exAtivo])
+  
 
   const renderUserTreinoAtual = () => (
     <>
       <Text style={styles.text_add_serie}>Volume: {volume}</Text>
-      <Exercicios exAtivo={exAtivo} setEx={setEx} serie={serie} setSerie={setSerie}/>
+  
+      <Exercicios exAtivo={exAtivo} setEx={setEx} serie={serie} setSerie={setSerie} bestSerie={bestSerie} bestKg={bestKg} />
+
       <TouchableOpacity style={styles.button} onPress={renderLista} ><Text style={styles.text_add_serie} >Adicionar Exercício</Text></TouchableOpacity>
-      <TouchableOpacity style={styles.button}  onPress={finishWork}><Text style={styles.text_add_serie}>Finalizar</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={finishWork}><Text style={styles.text_add_serie}>Finalizar</Text></TouchableOpacity>
     </>
   )
 
@@ -73,7 +97,7 @@ function NovoTreinamento({rotina, selectedDay}) {
   return (
     <ScrollView style={styles.page}>
      
-      {showListaExs ? renderListaExsBd() : renderUserTreinoAtual()}
+      {showListaExs ?renderListaExsBd() : renderUserTreinoAtual()}
       
     </ScrollView>
   );

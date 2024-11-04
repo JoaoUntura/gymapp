@@ -46,12 +46,10 @@ function App (){
             <Link style={styles.button} href="/Treinamentos">
                 <Text style={styles.buttonText}>Treinamentos</Text>
             </Link>
-            <Link style={styles.button} href="/GeradorRotina">
-                <Text style={styles.buttonText}>Gerador Rotinas</Text>
+            <Link style={styles.button} href="/Questionario">
+                <Text style={styles.buttonText}>Questionario</Text>
             </Link>
-            <Link style={styles.button} href="/MyCalendar">
-                <Text style={styles.buttonText}>Minha Rotina (BETA)</Text>
-            </Link>
+
             
         </>
     );

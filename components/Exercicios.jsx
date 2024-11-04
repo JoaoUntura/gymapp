@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import ModalEx from "./ModalEx";
+import { AuthContext } from './Contexto';
+import api from '../axios';
 
 
-function Exercicios({ exAtivo, setEx, serie, setSerie}) {
+
+function Exercicios({ exAtivo, setEx, serie, setSerie, bestSerie, bestKg}) {
 
    
   const [modal, setModal] = useState(null)
-
+  const [graphData, setgraphData] = useState(null)
+  const {getToken} = useContext(AuthContext);
 
 
   const handleChangeSerie = (idSerie, valor, campo) => {
@@ -42,10 +46,32 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
     };
 
 
-    const createModal = (idExercicio) => {
-      setModal(idExercicio)
-    };
+  const createModal = (idExercicio) => {
+    setModal(idExercicio)
+  };
 
+  const getProgressao = async(modal) => {
+    console.log(modal)
+    const token = await getToken()
+    let data = {modal}
+    let response = await api.post('/get_progessao', data ,
+      {headers: {
+          'Authorization': `Bearer ${token}`,  
+          'Content-Type': 'application/json',
+        }
+      });
+      setgraphData(response.data.data)
+      console.log(graphData)
+    }
+
+  useEffect(() => {
+    
+    if (modal !== null){
+      getProgressao(modal)
+    }
+    
+
+  },[modal])
     
   const renderSeries = (idExercicio) =>{
       let seriesDesseID = serie.filter(s=> s.idEx == idExercicio)
@@ -75,22 +101,27 @@ function Exercicios({ exAtivo, setEx, serie, setSerie}) {
   }
 
   const renderExsAtivos = () => (exAtivo.map(exercicio =>
-      (<View style={styles.cardAtivos} key={exercicio.idExercicio}>
-          <TouchableOpacity onLongPress={() => createModal(exercicio.idExercicio)} >
-              <Text style={styles.nome_ex}>{exercicio.nome}</Text>
-          </TouchableOpacity>
-          {renderSeries(exercicio.idExercicio)}
-          <TouchableOpacity style={styles.button_ex} onPress={() => addSerie(exercicio.idExercicio)}>
-              <Text style={styles.text_add_serie}> + Adicionar Serie</Text>
-          </TouchableOpacity>
-      </View>)
+  (<View style={styles.cardAtivos} key={exercicio.idExercicio}>
+    <TouchableOpacity onLongPress={() => createModal(exercicio.idExercicio)} >
+      <Text style={styles.nome_ex}>{exercicio.nome}</Text>
+    </TouchableOpacity>
+    <Text style={styles.serie_number}>
+      Melhor serie: {bestSerie[exercicio.idExercicio]?.reps || 'N/A'} x {bestSerie[exercicio.idExercicio]?.kg || 'N/A'}
+    </Text>
+    <Text style={styles.serie_number}>Melhor peso: {bestKg[exercicio.idExercicio]?.kg || 'N/A'}</Text>
+    <Text style={styles.serie_number}></Text>
+    {renderSeries(exercicio.idExercicio)}
+    <TouchableOpacity style={styles.button_ex} onPress={() => addSerie(exercicio.idExercicio)}>
+      <Text style={styles.text_add_serie}> + Adicionar Serie</Text>
+    </TouchableOpacity>
+  </View>)
   ))
 
 
   return (
       <>
-      {modal && <ModalEx modal={modal} setModal={setModal}  deletar={deleteEx} />}
-      {renderExsAtivos()}
+      {modal && <ModalEx modal={modal} setModal={setModal}  deletar={deleteEx} graphData ={graphData}/>}
+      {bestSerie && bestKg && renderExsAtivos()}
       </>
 
   );

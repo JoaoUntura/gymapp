@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 from banco import Banco
 from Auth import Auth
-from rotina import Rotina
+
 from estatisticas import Stats
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException, Depends
@@ -12,6 +12,10 @@ from fastapi.security import OAuth2PasswordBearer
 from typing import List
 from passlib.hash import bcrypt
 import json
+from datetime import datetime
+
+
+
 
 bd = Banco()
 app = FastAPI()
@@ -37,7 +41,7 @@ app.add_middleware(
 
 
 class Treinamento(BaseModel):
-    serie:List[dict]
+    serie:list
     volume:int
 
 
@@ -51,6 +55,12 @@ class Questionario(BaseModel):
     days:dict
     foco:str
     cardio:str
+
+class Exs(BaseModel):
+    exs: List[dict]
+
+class IdEx(BaseModel):
+    modal: int
 
 @app.on_event("startup")
 async def startup():
@@ -104,12 +114,14 @@ async def series_id(id:int):
 @app.post("/novo_treinamento")
 async def novo_treinamento(treinamento:Treinamento , token: str = Depends(oauth2_scheme)):
     userid = auth.verify_token(token)
-    await bd.insert_treinamento(userid, treinamento.volume)
+    data = datetime.now()
+    await bd.insert_treinamento(userid, treinamento.volume, data)
     
     treino_id = await bd.last_treinamento()
+   
 
     for s in treinamento.serie:
-        await bd.insert_serie(treino_id['idTreinamento'],s['idEx'], s['reps'], s['kg'])
+        await bd.insert_serie(treino_id['idTreinamento'],s['idEx'], s['reps'], s['kg'], userid)
 
 
     return "ok"
@@ -143,22 +155,8 @@ async def check_user(user: User):
 async def new_rotina(quest:Questionario, token: str = Depends(oauth2_scheme)):
     userid = auth.verify_token(token)
     dias =  json.dumps(quest.days)
-    print(dias)
     await bd.insert_rotina(userid, quest.experiencia, quest.objetivo, dias,quest.foco, quest.cardio)
     
-    return "ok"
-
-
-@app.get("/get_rotina")
-async def get_rotina(request:Request, token: str = Depends(oauth2_scheme)):
-    userid = auth.verify_token(token)
-    data = await bd.select_rotina(userid)
-    rotina = Rotina(data['experiencia'], data['objetivo'], data['days'], data['foco'], data['cardio'])
-    myrotina = rotina.create_rotina()
-
-    return {"myrotina":myrotina}
-
-
     return "ok"
 
 
@@ -170,3 +168,36 @@ async def stats(request:Request, token: str = Depends(oauth2_scheme)):
 
     return  {"musculo_porcentagem":musculo_porcentagem,"musculo":musculo,"musculo_color" :musculo_color}
 
+
+@app.post("/get_best")
+async def getbest(exercicios:Exs, token: str = Depends(oauth2_scheme)):
+    userid = auth.verify_token(token)
+    data = exercicios.exs
+    bestSeries= {}
+    bestKgs= {}
+
+    for ex in data:
+        bestserie = await bd.select_best_volume(ex['idExercicio'], userid)
+        bestSeries[ex['idExercicio']] = {'reps':0, 'kg':0}
+
+        if bestserie:
+            bestSeries[ex['idExercicio']] = bestserie
+
+        bestkg = await bd.select_best_kg(ex['idExercicio'], userid)
+        bestKgs[ex['idExercicio']]= {'kg':0}
+    
+
+        if bestkg:
+            bestKgs[ex['idExercicio']] = bestkg
+    
+   
+    return {"bestSeries":bestSeries, "bestKgs":bestKgs}
+
+@app.post("/get_progessao")
+async def get_progessao(id:IdEx, token: str = Depends(oauth2_scheme)):
+    userid = auth.verify_token(token)
+    s = Stats(userid)
+    data = await s.get_progessao(id.modal)
+    
+   
+    return {"data":data}
